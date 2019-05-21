@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-secrets
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hello-secrets
+  template:
+    metadata:
+      labels:
+        app: hello-secrets
+      annotations:
+        vault.security/enabled: "true"
+        vault.security/vault-addr: "https://vault.default.svc.cluster.local:8200"
+        vault.security/vault-role: "tester"
+        vault.security/vault-path: "secret/test/vault/auto/secret"
+        vault.security/vault-tls-secret-name: "vault-consul-ca"
+    spec:
+      serviceAccountName: tester
+      imagePullSecrets:
+        - name: awsecr-cred
+      containers:
+      - name: alpine
+        image: alpine
+        command:
+          - "sh"
+          - "-c"
+          - "echo $AWS_SECRET_ACCESS_KEY && echo going to sleep... && sleep 10000"
+        env:
+        - name:  AWS_SECRET_ACCESS_KEY
+          value: vault:AWS_SECRET_ACCESS_KEY

@@ -1,0 +1,48 @@
+# Default values for spot-config-webhook.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 3
+minikube: true
+debug: true
+
+tlsCertsSecretName: vault-secrets-webhook-tls-certs
+
+image:
+  repository: innovia/vault-secrets-webhook
+  tag: 1.0.0
+  # pullPolicy: Always
+
+
+service:
+  name: vault-secrets-webhook
+  type: ClusterIP
+  externalPort: 443
+  internalPort: 8443
+
+env:
+  VAULT_ENV_IMAGE: innovia/vault-env:1.1.0
+
+resources:
+  limits:
+    cpu: 0.5
+    memory: 192Mi
+  requests:
+    cpu: 0.25
+    memory: 128Mi
+
+nodeSelector:
+  node_type: "on-demand"
+
+tolerations: []
+
+affinity: |
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+    - weight: 100
+      podAffinityTerm:
+        topologyKey: kubernetes.io/hostname
+        labelSelector:
+          matchLabels:
+            app: {{ template "vault-secrets-webhook.name" . }}
+            release: {{ .Release.Name }}
