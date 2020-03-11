@@ -3,7 +3,7 @@
 # Declare variables to be passed into your templates.
 
 replicaCount: 3
-minikube: true
+minikube: false
 debug: true
 
 tlsCertsSecretName: vault-secrets-webhook-tls-certs
@@ -31,8 +31,7 @@ resources:
     cpu: 0.25
     memory: 128Mi
 
-nodeSelector:
-  node_type: "on-demand"
+nodeSelector: {}
 
 tolerations: []
 
