@@ -82,7 +82,7 @@ func main() {
 	log.Infof("Getting Vault secrets from path: %s", path)
 	secret, secretError = client.Logical.Read(path)
 	if secretError != nil {
-		log.Fatalf("Failed to read secret '%s': %s", path, err.Error())
+		log.Fatalf("Failed to read secret '%s': %s", path, secretError.Error())
 	}
 	if secret == nil {
 		log.Fatalf("Vault secret path not found: %s", path)
